@@ -4,7 +4,7 @@ class Message extends Component {
 
   render() {
     return (
-      <div>
+      <div onDoubleClick={e => console.log(e)}>
         <h1 className="uk-text-center">{this.props.msg.message}</h1>
       </div>
     );

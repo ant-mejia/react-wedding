@@ -22,14 +22,24 @@ const generateToken = (data, secret) => {
 }
 
 function verifyToken(req, res, next) {
-  let token = req.body.jwt;
-  jwt.verify(token, process.env.SK, (err, decoded) => {
-    if (err) {
-      console.log(err);
-    }
-    req.user = decoded;
-    return next();
-  });
+  if (next !== undefined) {
+    let token = req.body.jwt;
+    jwt.verify(token, process.env.SK, (err, decoded) => {
+      if (err) {
+        console.log(err);
+      }
+      req.user = decoded;
+      return next();
+    });
+  } else {
+    let token = req;
+    jwt.verify(token, process.env.SK, (err, decoded) => {
+      if (err) {
+        console.log(err);
+      }
+      return { valid: true, user: decoded };
+    });
+  }
 }
 
 function verifyEmail(req, res, next) {

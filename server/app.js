@@ -30,6 +30,7 @@ io.on('connection', function(socket) {
   });
 
 });
+
 var gbs = io.of('/guestbook');
 gbs.on('connection', function(socket) {
   console.log('someone connected');
