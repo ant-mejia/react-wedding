@@ -1,0 +1,36 @@
+/* BORDER RADIUS */
+@mixin border-radius($radius) {
+    -webkit-border-radius: $radius;
+    -moz-border-radius   : $radius;
+    -ms-border-radius    : $radius;
+    border-radius        : $radius;
+}
+/* MARGIN AUTO */
+@mixin m-auto {
+    margin: {
+        left : auto;
+        right: auto;
+    }
+}
+/* Calculate REM */
+@function calculateRem($size) {
+    $remSize: $size / 16px;
+    @return $remSize * 1rem;
+}
+/* Font Size */
+@mixin font-size($size) {
+    font-size: $size;
+    font-size: calculateRem($size);
+}
+/* FONT */
+@mixin font($family, $size) {
+    font-family: $family;
+    @include font-size($size);
+}
+/* TRANSITIONS */
+@mixin transition($transition...) {
+    -moz-transition   : $transition;
+    -o-transition     : $transition;
+    -webkit-transition: $transition;
+    transition        : $transition;
+}

@@ -1,0 +1,7 @@
+#notfound {
+    background-color: white;
+
+    h1 {
+        @include font($lato, 220px);
+    }
+}

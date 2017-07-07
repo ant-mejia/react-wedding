@@ -1,0 +1,27 @@
+@import "../../node_modules/uikit/dist/css/uikit.min.css";
+@import url("https://fonts.googleapis.com/css?family=Lato:100|Great+Vibes|Sacramento");
+@import "partials/partials";
+
+html {
+  margin: 0;
+  height: 100%;
+
+  body {
+    height: 100%;
+
+    #root {
+      height: 100%;
+
+      #body {
+        display       : flex;
+        min-height    : 100%;
+        flex-direction: column;
+        margin        : 0;
+
+        #app {
+          flex: 1;
+        }
+      }
+    }
+  }
+}

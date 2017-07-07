@@ -1,0 +1,39 @@
+header {
+    nav {
+        .uk-navbar-nav {
+            li {
+                a {
+                    transition: color linear 0.3s;
+
+                    &.active {
+                        color: red;
+                    }
+                }
+            }
+        }
+
+        &.mobile {
+            .uk-navbar-right {
+                li.hamburger-container {
+                    display        : -webkit-flex;
+                    display        : -ms-flex;
+                    display        : flex;
+                    flex-direction : column;
+                    justify-content: space-around;
+                    padding-top    : 5px;
+
+                    &:hover {
+                        cursor: pointer;
+                    }
+
+                    .hamburger {
+                        height          : 1px;
+                        width           : 20px;
+                        background-color: $primary;
+                        margin-bottom   : 5px;
+                    }
+                }
+            }
+        }
+    }
+}
