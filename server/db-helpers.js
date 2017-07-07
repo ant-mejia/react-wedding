@@ -4,10 +4,11 @@ const authHelpers = require('./auth/auth-helpers');
 const jwt = require('jsonwebtoken');
 
 let guestbook = {
-  newMessage: (msg, cb) => {
+  newMessage: (msg, uid, cb) => {
     models.Guestbook.create({
       uid: authHelpers.generateUID(),
-      message: msg
+      message: msg,
+      user_uid: uid
     }).then((data) => {
       if (cb !== undefined) {
         cb(data);
@@ -18,7 +19,7 @@ let guestbook = {
     if (next === undefined) {
       models.Guestbook.findAll({
         order: [
-          ['created_at', 'DESC']
+          ['createdAt', 'DESC']
         ]
       }).then((obj) => {
         req(obj)
@@ -26,7 +27,7 @@ let guestbook = {
     } else {
       models.Guestbook.findAll({
         order: [
-          ['created_at', 'DESC']
+          ['createdAt', 'DESC']
         ]
       }).then((msgs) => {
         req.msgs = msgs;

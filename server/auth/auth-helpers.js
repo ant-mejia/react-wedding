@@ -22,24 +22,14 @@ const generateToken = (data, secret) => {
 }
 
 function verifyToken(req, res, next) {
-  if (next !== undefined) {
-    let token = req.body.jwt;
-    jwt.verify(token, process.env.SK, (err, decoded) => {
-      if (err) {
-        console.log(err);
-      }
-      req.user = decoded;
-      return next();
-    });
-  } else {
-    let token = req;
-    jwt.verify(token, process.env.SK, (err, decoded) => {
-      if (err) {
-        console.log(err);
-      }
-      return { valid: true, user: decoded };
-    });
-  }
+  let token = req.body.jwt;
+  jwt.verify(token, process.env.SK, (err, decoded) => {
+    if (err) {
+      console.log(err);
+    }
+    req.user = decoded;
+    return next();
+  });
 }
 
 function verifyEmail(req, res, next) {
@@ -75,7 +65,7 @@ function userLog(req, res, next, action) {
   models.UserLogs.create({
     uid: generateUID(),
     action: action,
-    user_uid: req.body.uid
+    userUid: req.body.uid
   });
   return next();
 }

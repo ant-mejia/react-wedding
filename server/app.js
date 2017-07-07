@@ -1,6 +1,7 @@
 // server/app.js
 const express = require('express');
 const morgan = require('morgan');
+const jwt = require('jsonwebtoken');
 const path = require('path');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
@@ -33,14 +34,23 @@ io.on('connection', function(socket) {
 
 var gbs = io.of('/guestbook');
 gbs.on('connection', function(socket) {
+  let user = null;
   console.log('someone connected');
+  let token = socket.handshake.query.jta;
+  jwt.verify(token, process.env.SK, (err, decoded) => {
+    if (err) {
+      console.log(err);
+    }
+    user = decoded;
+  });
+  console.log(user);
   socket.on('get messages', () => {
     dbm.guestbook.getMessages((data) => {
       socket.emit('update messages', data);
     });
   });
   socket.on('new message', (msg) => {
-    dbm.guestbook.newMessage(msg, (data) => {
+    dbm.guestbook.newMessage(msg, user.uid, (data) => {
       dbm.guestbook.getMessages((data) => {
         socket.emit('update messages', data);
       });

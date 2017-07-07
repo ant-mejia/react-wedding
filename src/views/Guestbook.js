@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import localStorage from 'localStorage';
 import io from 'socket.io-client';
 import Message from '../components/Message';
 
@@ -6,7 +7,15 @@ class Guestbook extends Component {
   constructor(props) {
     super(props);
     this.state = { messages: [] };
-    this.socket = io('http://localhost:5000/guestbook');
+    this.socket = io('http://localhost:5000/guestbook', {
+      query: {
+        jta: localStorage.getItem('jta')
+      }
+    });
+    this.socket.on('connection', (socket) => {
+      let token = socket.handshake.query.token;
+      console.log(token);
+    });
     this.socket.on('update messages', (data) => {
       this.setState({ messages: data });
     });

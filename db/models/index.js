@@ -11,7 +11,7 @@ Product.hasMany(Review);
 Review.belongsTo(Product);
 Users.hasMany(Invitations);
 UserLogs.belongsTo(Users);
-Guestbook.belongsTo(Users);
+Guestbook.belongsTo(Users, { as: 'creator' });
 
 module.exports = {
   Users,
