@@ -16,7 +16,7 @@ let guestbook = {
             return console.log(err);
           }
           obj.file.files['0'].owner = uid;
-          image.logImage(imageUid, fileName, obj.file.files['0'], (data) => {
+          image.newImage(imageUid, fileName, obj.file.files['0'], obj.file.buffer, (data) => {
             models.Guestbook.create({
               uid: authHelpers.generateUID(),
               message: obj.message,
@@ -48,12 +48,21 @@ let guestbook = {
       models.Guestbook.findAll({
         include: [
           { model: models.Users, required: true, attributes: ['firstname', 'lastname', 'email'] },
-          { model: models.Images, attributes: ['uid', 'path'] }
+          { model: models.Images, attributes: ['uid', 'path', 'type'] }
         ],
         order: [
           ['createdAt', 'DESC']
         ]
       }).then((obj) => {
+        for (var i = 0; i < obj.length; i++) {
+          if (obj[i].dataValues.image !== null && obj[i].dataValues.imageUid !== null) {
+            let image = obj[i].dataValues.image;
+            let buffer = fs.readFileSync(image.path);
+            let buffData = 'data:' + obj[i].dataValues.image.dataValues.type + ';base64,' + buffer.toString('base64');
+            obj[i].dataValues.image.dataValues.data = buffData;
+          }
+        }
+        console.log('complete');
         req(obj)
       });
     } else {
@@ -70,13 +79,14 @@ let guestbook = {
 };
 
 let image = {
-  logImage: (uid, path, obj, cb) => {
+  newImage: (uid, path, obj, buffer, cb) => {
     models.Images.create({
       uid: uid,
       path: path,
       type: obj.type,
       size: obj.size,
-      userUid: obj.owner
+      userUid: obj.owner,
+      buffer: buffer
     }).then((data) => {
       if (cb && typeof cb === "function") {
         cb(data)

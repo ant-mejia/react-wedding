@@ -50,6 +50,8 @@ gbs.on('connection', function(socket) {
 
   socket.on('get messages', () => {
     dbm.guestbook.getMessages((data) => {
+      console.log('got messages!');
+      // console.log(data);
       socket.emit('update messages', data);
     });
   });

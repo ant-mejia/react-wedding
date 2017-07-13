@@ -19,6 +19,7 @@ class Guestbook extends Component {
     });
     this.socket.on('update messages', (data) => {
       this.setState({ messages: data });
+      console.log(data);
     });
   }
 
@@ -40,6 +41,8 @@ class Guestbook extends Component {
       }
 
       reader.readAsDataURL(e.target.files[0]);
+    } else {
+      this.setState({ preview: '' })
     }
   }
 

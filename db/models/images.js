@@ -24,6 +24,9 @@ const Images = db.define('images', {
       notEmpty: false
     }
   },
+  buffer: {
+    type: Sequelize.TEXT
+  },
   size: {
     type: Sequelize.INTEGER,
     allowNull: false,

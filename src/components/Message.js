@@ -6,7 +6,7 @@ class Message extends Component {
   render() {
     let image = '';
     if (this.props.msg.image) {
-      image = <image src={this.props.msg.image.path}/>
+      image = <img src={this.props.msg.image.data}/>
     }
     return (
       <div onDoubleClick={e => console.log(e)}>
