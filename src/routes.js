@@ -17,6 +17,7 @@ import Profile from './views/auth/Profile.js';
 import Guestbook from './views/Guestbook.js';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import Preloader from './components/Preloader';
 import UIkit from 'uikit';
 
 
@@ -25,7 +26,7 @@ class Routes extends React.Component {
     super(props);
     this.state = {
       user: {},
-      guestbook: {}
+      guestbook: {},
     };
     this.socket = io('http://localhost:5000');
     this.socket.on('hello', (cnt) => {
@@ -162,6 +163,7 @@ class Routes extends React.Component {
     return (
       <Router>
         <div id="body">
+          <Preloader/>
           <Header user="a"/>
           <div id="app">
             <Switch>
@@ -173,8 +175,8 @@ class Routes extends React.Component {
               <Route exact path="/story" component={Story}/>
               <Route path="/login" component={(location) => <Login location={location.location} closeNotifications={this.closeNotifications} loginUser={this.loginUser} isUserAuth={this.isUserAuth} user={this.state.user}/>}/>
               <Route path="/register" component={() => <Register createNotification={this.createNotification} closeNotifications={this.closeNotifications} registerUser={this.registerUser} isUserAuth={this.isUserAuth} user={this.state.user}/>}/>
-              <AuthRoute path="/profile" isUserAuth={this.isUserAuth} user={this.state.user} component={() => <Profile isUserAuth={this.isUserAuth}/>}/>
-              <AuthRoute path="/guestbook" isUserAuth={this.isUserAuth} user={this.state.user} component={() => <Guestbook methods={this.guestbook} isUserAuth={this.isUserAuth}/>}/>
+              <AuthRoute path="/profile" appLoaded={this.state.loaded} isUserAuth={this.isUserAuth} user={this.state.user} component={() => <Profile isUserAuth={this.isUserAuth}/>}/>
+              <AuthRoute path="/guestbook" appLoaded={this.state.loaded} isUserAuth={this.isUserAuth} user={this.state.user} component={() => <Guestbook methods={this.guestbook} isUserAuth={this.isUserAuth}/>}/>
               <Route component={NotFound}/>
             </Switch>
           </div>

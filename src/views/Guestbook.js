@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import localStorage from 'localStorage';
 import io from 'socket.io-client';
 import Message from '../components/Message';
+import GuestbookForm from '../components/GuestbookForm';
 
 class Guestbook extends Component {
   constructor(props) {
     super(props);
-    this.state = { messages: [] };
+    this.state = { messages: [], imagePre: '' };
     this.socket = io('http://localhost:5000/guestbook', {
       query: {
         jta: localStorage.getItem('jta')
@@ -24,16 +25,38 @@ class Guestbook extends Component {
   componentDidMount() {
     this.socket.emit('get messages', (data) => {
       console.log(data);
-    })
+    });
   }
 
   componentWillUnmount() {
     this.socket.close()
   }
 
+  previewImage = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      var reader = new FileReader();
+      reader.onload = (e) => {
+        this.setState({ preview: e.target.result });
+      }
+
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  }
+
   handleSubmit = (event) => {
     event.preventDefault();
-    this.socket.emit('new message', event.target.querySelector('.messageInput').value)
+    let packet = { message: event.target.querySelector('.messageInput').value };
+    console.log(event.target.querySelector('.fileInput').files);
+    if (event.target.querySelector('.fileInput').files.length !== 0) {
+      packet.file = {
+        buffer: event.target.querySelector('.fileInput').files['0'],
+        ext: event.target.querySelector('.fileInput').files['0'].type.split('/')[1],
+        files: event.target.querySelector('.fileInput').files
+      }
+    }
+    this.socket.emit('new message', packet);
+    console.log(event.target.querySelector('.fileInput').files['0']);
+    event.target.querySelector('.messageInput').value = '';
   }
 
   render() {
@@ -44,8 +67,10 @@ class Guestbook extends Component {
         })}
         <form onSubmit={(e) => this.handleSubmit(e)}>
           <input className="messageInput" type="text"/>
+          <input ref="fileInput" type="file" className="fileInput" accept="image/png, image/jpeg, image/gif" onChange={e => this.previewImage(e)}/>
           <input type="submit"/>
         </form>
+        <GuestbookForm imgSrc={this.state.preview}/>
       </div>
     );
   }

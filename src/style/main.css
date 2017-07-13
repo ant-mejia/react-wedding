@@ -52,6 +52,30 @@ footer {
 .jumbotron {
   background-color: #d6b0cb; }
 
+#preload {
+  -moz-transition: background, 0.3s linear;
+  -o-transition: background, 0.3s linear;
+  -webkit-transition: background, 0.3s linear;
+  transition: background, 0.3s linear;
+  -moz-transition: height, 0.3s linear, 0.3s;
+  -o-transition: height, 0.3s linear, 0.3s;
+  -webkit-transition: height, 0.3s linear, 0.3s;
+  transition: height, 0.3s linear, 0.3s;
+  -moz-transition: width, 0.3s linear, 0.3s;
+  -o-transition: width, 0.3s linear, 0.3s;
+  -webkit-transition: width, 0.3s linear, 0.3s;
+  transition: width, 0.3s linear, 0.3s;
+  position: absolute;
+  z-index: 200; }
+  #preload.loading {
+    background: white;
+    height: 100%;
+    width: 100%; }
+  #preload.loaded {
+    background: transparent;
+    height: 0;
+    width: 0; }
+
 html {
   margin: 0;
   height: 100%; }

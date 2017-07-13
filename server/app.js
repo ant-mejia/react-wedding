@@ -4,11 +4,14 @@ const morgan = require('morgan');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const bodyParser = require('body-parser');
+const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const passportLocal = require('./auth/local');
 const authHelpers = require('./auth/auth-helpers');
 const dbm = require('./db-helpers');
+const db = require('../db/index');
 const app = express();
+const models = require('../db/models/index');
 const passport = require('passport');
 require('dotenv').config();
 var server = require('http').createServer(app);
@@ -33,29 +36,48 @@ io.on('connection', function(socket) {
 });
 
 var gbs = io.of('/guestbook');
+
 gbs.on('connection', function(socket) {
-  let user = null;
+  this.user = null;
   console.log('someone connected');
   let token = socket.handshake.query.jta;
   jwt.verify(token, process.env.SK, (err, decoded) => {
     if (err) {
-      console.log(err);
+      console.log(err, 'err');
     }
-    user = decoded;
+    this.user = decoded;
   });
-  console.log(user);
+
   socket.on('get messages', () => {
     dbm.guestbook.getMessages((data) => {
       socket.emit('update messages', data);
     });
   });
-  socket.on('new message', (msg) => {
-    dbm.guestbook.newMessage(msg, user.uid, (data) => {
+
+  socket.on('upload image', (file) => {
+    let uid = authHelpers.generateUID();
+    console.log(file.files['0']);
+    var fileName = __dirname + '/fs/uploads/' + uid + '-' + this.user.uid + '.' + file.ext;
+    fs.writeFile(fileName, file.buffer, function(err, data) {
+      if (err) {
+        return console.log(err);
+      }
+      dbm.image.logImage(uid, fileName, file.files['0'], (data) => {
+        console.log(data);
+      });
+    });
+  });
+
+  socket.on('new message', (obj) => {
+    dbm.guestbook.newMessage(obj, this.user.uid, (data) => {
+      console.log("DATA: ", data.dataValues.uid);
+
       dbm.guestbook.getMessages((data) => {
         socket.emit('update messages', data);
       });
-    })
+    });
   });
+
 });
 server.listen(5000);
 
@@ -155,6 +177,15 @@ app.post('/login', (req, res, next) => {
   }
 }, (req, res, next) => {
   if (req.user) {
+    models.Users.findAll({
+      where: {
+        uid: req.user.uid
+      }
+    }).then((d) => {
+      console.log('YES!@');
+    }).catch((a) => {
+      console.log('Abd');
+    })
     return res.json(req.user);
   }
   return next();

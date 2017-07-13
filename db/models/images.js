@@ -3,27 +3,34 @@
 const Sequelize = require('sequelize');
 const db = require('../index.js');
 
-const Guestbook = db.define('guestbook', {
+const Images = db.define('images', {
   uid: {
     type: Sequelize.STRING,
     allowNull: false,
     primaryKey: true,
     unique: true
   },
-  message: {
+  path: {
     type: Sequelize.STRING,
     allowNull: false,
     validate: {
       notEmpty: false
     }
   },
-  recievedAt: {
-    type: Sequelize.DATE
+  type: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: false
+    }
   },
-  viewedAt: {
-    type: Sequelize.DATE
+  size: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    validate: {
+      notEmpty: false
+    }
   }
-
 });
 
-module.exports = Guestbook;
+module.exports = Images;

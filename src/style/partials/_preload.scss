@@ -1,0 +1,19 @@
+#preload {
+  @include transition(background, 0.3s linear);
+  @include transition(height, 0.3s linear, 0.3s);
+  @include transition(width, 0.3s linear, 0.3s);
+  position: absolute;
+  z-index : 200;
+
+  &.loading {
+    background: white;
+    height    : 100%;
+    width     : 100%;
+  }
+
+  &.loaded {
+    background: transparent;
+    height    : 0;
+    width     : 0;
+  }
+}
