@@ -14,9 +14,11 @@ const app = express();
 const models = require('../db/models/index');
 const passport = require('passport');
 require('dotenv').config();
-var server = require('http').createServer(app);
-var io = require('socket.io')(server);
-
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+const slogger = require('slogged')
+const moment = require('moment');
+io.use(slogger())
 
 io.on('connection', function(socket) {
   console.log("Socket established with id: " + socket.id);
@@ -36,7 +38,7 @@ io.on('connection', function(socket) {
 });
 
 var gbs = io.of('/guestbook');
-
+gbs.use(slogger({ minimal: true }));
 gbs.on('connection', function(socket) {
   this.user = null;
   console.log('someone connected');
@@ -46,12 +48,14 @@ gbs.on('connection', function(socket) {
       console.log(err, 'err');
     }
     this.user = decoded;
+    console.log(Object.keys(socket.client));
+    // dbm.logSocket(params, )
   });
+
 
   socket.on('get messages', () => {
     dbm.guestbook.getMessages((data) => {
       console.log('got messages!');
-      // console.log(data);
       socket.emit('update messages', data);
     });
   });
@@ -75,7 +79,7 @@ gbs.on('connection', function(socket) {
       console.log("DATA: ", data.dataValues.uid);
 
       dbm.guestbook.getMessages((data) => {
-        socket.emit('update messages', data);
+        gbs.emit('update messages', data);
       });
     });
   });
@@ -84,7 +88,9 @@ gbs.on('connection', function(socket) {
 server.listen(5000);
 
 // Setup logger
-app.use(morgan(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] :response-time ms'));
+morgan.token('type', function(req, res) { return req.user.email });
+morgan.token('moment', function(req, res) { return moment().format("MM/DD/YYYY h:mm:ss a Z") });
+app.use(morgan(':remote-addr - :type :referrer :moment ":method :url HTTP/:http-version" :status :response-time ms'));
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({
   extended: false

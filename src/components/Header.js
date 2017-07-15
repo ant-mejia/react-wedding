@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, NavLink } from 'react-router-dom'; 
+import { Route, NavLink } from 'react-router-dom';
 import Logo from './Logo.js';
 
 const Header = ({}) => (
@@ -18,7 +18,7 @@ const Header = ({}) => (
               </li>
               <li className="">
                 <Route>
-                  <NavLink activeClassName="active" to="/#wedding">
+                  <NavLink activeClassName="active" to="/login">
                     Wedding
                   </NavLink>
                 </Route>

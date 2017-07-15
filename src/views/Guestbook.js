@@ -18,6 +18,7 @@ class Guestbook extends Component {
       console.log(token);
     });
     this.socket.on('update messages', (data) => {
+      console.log('getting')
       this.setState({ messages: data });
       console.log(data);
     });
@@ -57,7 +58,9 @@ class Guestbook extends Component {
         files: event.target.querySelector('.fileInput').files
       }
     }
-    this.socket.emit('new message', packet);
+    this.socket.emit('new message', packet, (data) => {
+      console.log(data, "SUCESSQ!");
+    });
     console.log(event.target.querySelector('.fileInput').files['0']);
     event.target.querySelector('.messageInput').value = '';
   }

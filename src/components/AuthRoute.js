@@ -6,16 +6,13 @@ const AuthRoute = ({ component: Component, ...rest }) => {
   return (
     <Route {...rest} render={props => {
       let p = { ...rest };
-      return (p.isUserAuth() ? (<Component {...props}/>): (false ? (
-        <Redirect to={{
-          pathname: '/login',
-          state: { from: props.location }
-        }}/>
+      return (p.isUserAuth() ? (<Component {...props}/>): (true ? (
+        <Redirect to={{pathname: '/login', state: { from: props.location } }}/>
       ) : (<Component {...props}/>))
-      )
-    }
-    }
-    />)
+)
+}
+}
+/>)
 };
 
 AuthRoute.propTypes = {
