@@ -24,7 +24,7 @@ class Guestbook extends Component {
     });
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.socket.emit('get messages', (data) => {
       console.log(data);
     });
@@ -49,30 +49,37 @@ class Guestbook extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    let packet = { message: event.target.querySelector('.messageInput').value };
-    console.log(event.target.querySelector('.fileInput').files);
-    if (event.target.querySelector('.fileInput').files.length !== 0) {
-      packet.file = {
-        buffer: event.target.querySelector('.fileInput').files['0'],
-        ext: event.target.querySelector('.fileInput').files['0'].type.split('/')[1],
-        files: event.target.querySelector('.fileInput').files
+    if (this.refs.messageInput.value.length > 0) {
+      let packet = { message: event.target.querySelector('.messageInput').value };
+      console.log(event.target.querySelector('.fileInput').files);
+      if (event.target.querySelector('.fileInput').files.length !== 0) {
+        packet.file = {
+          buffer: event.target.querySelector('.fileInput').files['0'],
+          ext: event.target.querySelector('.fileInput').files['0'].type.split('/')[1],
+          files: event.target.querySelector('.fileInput').files
+        }
       }
+      this.socket.emit('new message', packet, (data) => {
+        console.log(data, "SUCESSQ!");
+      });
+      console.log(event.target.querySelector('.fileInput').files['0']);
+      event.target.querySelector('.messageInput').value = '';
+    } else {
+      this.props.createNotification();
     }
-    this.socket.emit('new message', packet, (data) => {
-      console.log(data, "SUCESSQ!");
-    });
-    console.log(event.target.querySelector('.fileInput').files['0']);
-    event.target.querySelector('.messageInput').value = '';
   }
 
   render() {
     return (
-      <div>
-        {this.state.messages.map(msg => {
-          return <Message key={msg.uid} msg={msg}/>
-        })}
+      <div className="uk-container uk-margin">
+        <h1>Guestbook</h1>
+        <div className="uk-container uk-width-1-2">
+          {this.state.messages.map(msg => {
+            return <Message key={msg.uid} msg={msg}/>
+          })}
+        </div>
         <form onSubmit={(e) => this.handleSubmit(e)}>
-          <input className="messageInput" type="text"/>
+          <input ref="messageInput" className="messageInput" type="text"/>
           <input ref="fileInput" type="file" className="fileInput" accept="image/png, image/jpeg, image/gif" onChange={e => this.previewImage(e)}/>
           <input type="submit"/>
         </form>

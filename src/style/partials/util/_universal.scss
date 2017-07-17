@@ -7,3 +7,18 @@
 .lato {
   font-family: $lato;
 }
+
+.image-container {
+  height    : 400px;
+  width     : 400px;
+  display   : block;
+  margin    : 0 auto;
+  background: #aaa;
+
+  img {
+    display   : block;
+    margin    : 0 auto;
+    max-width : 100%;
+    max-height: 100%;
+  }
+}

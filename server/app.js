@@ -18,10 +18,10 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const slogger = require('slogged')
 const moment = require('moment');
-io.use(slogger())
+var rfs = require('rotating-file-stream');
 
+io.use(slogger())
 io.on('connection', function(socket) {
-  console.log("Socket established with id: " + socket.id);
   socket.emit('hello', "TEST");
 
   socket.on('guestbook newMessage', (str) => {
@@ -41,14 +41,14 @@ var gbs = io.of('/guestbook');
 gbs.use(slogger({ minimal: true }));
 gbs.on('connection', function(socket) {
   this.user = null;
-  console.log('someone connected');
   let token = socket.handshake.query.jta;
   jwt.verify(token, process.env.SK, (err, decoded) => {
     if (err) {
       console.log(err, 'err');
     }
     this.user = decoded;
-    console.log(Object.keys(socket.client));
+    // console.log(Object.keys(socket.client.request));
+    console.log("Socket established with user: " + this.user.email);
     // dbm.logSocket(params, )
   });
 
@@ -88,9 +88,15 @@ gbs.on('connection', function(socket) {
 server.listen(5000);
 
 // Setup logger
+var logDirectory = path.join(__dirname, 'logs');
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
+let stream = rfs('file.log', { size: '10M', interval: '1d', path: logDirectory });
+
 morgan.token('type', function(req, res) { return req.user.email });
 morgan.token('moment', function(req, res) { return moment().format("MM/DD/YYYY h:mm:ss a Z") });
-app.use(morgan(':remote-addr - :type :referrer :moment ":method :url HTTP/:http-version" :status :response-time ms'));
+app.use(morgan(':remote-addr - :type :referrer :moment ":method :url HTTP/:http-version" :status :response-time ms', {
+  stream: stream
+}));
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({
   extended: false

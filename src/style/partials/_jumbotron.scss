@@ -1,3 +1,7 @@
 .jumbotron {
-    background-color: $primary;
+  background: linear-gradient(to top, $primary 70%, #fff);
+
+  img {
+    opacity: 0.2;
+  }
 }

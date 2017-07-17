@@ -38,12 +38,12 @@ class Login extends React.Component {
   render() {
     let path = this.props.location.state ?
       this.props.location.state.from.pathname.split('/')[1] :
-      '';
+      '/profile';
     let heading = path === 'profile' ?
       'You have to Login!' :
       'Please Login';
     if (this.props.isUserAuth()) {
-      return (<Redirect to={this.props.location.state.from.pathname}/>)
+      return (<Redirect to={path}/>)
     }
     return (
       <div className="uk-container">

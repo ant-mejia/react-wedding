@@ -33,6 +33,7 @@
     "redux": "^3.7.1",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.2.0",
+    "rotating-file-stream": "^1.2.2",
     "sequelize": "^4.2.0",
     "slogged": "^1.1.1",
     "socket.io": "^2.0.3",

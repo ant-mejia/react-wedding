@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { CSSTransitionGroup } from 'react-transition-group';
 import io from 'socket.io-client';
 import localStorage from 'localStorage';
 import axios from 'axios';
@@ -176,7 +177,7 @@ class Routes extends React.Component {
               <Route path="/login" component={(location) => <Login location={location.location} closeNotifications={this.closeNotifications} loginUser={this.loginUser} isUserAuth={this.isUserAuth} user={this.state.user}/>}/>
               <Route path="/register" component={() => <Register createNotification={this.createNotification} closeNotifications={this.closeNotifications} registerUser={this.registerUser} isUserAuth={this.isUserAuth} user={this.state.user}/>}/>
               <AuthRoute path="/profile" appLoaded={this.state.loaded} isUserAuth={this.isUserAuth} user={this.state.user} component={() => <Profile isUserAuth={this.isUserAuth}/>}/>
-              <AuthRoute path="/guestbook" appLoaded={this.state.loaded} isUserAuth={this.isUserAuth} user={this.state.user} component={() => <Guestbook methods={this.guestbook} isUserAuth={this.isUserAuth}/>}/>
+              <AuthRoute path="/guestbook" appLoaded={this.state.loaded} isUserAuth={this.isUserAuth} user={this.state.user} component={() => <Guestbook methods={this.guestbook} isUserAuth={this.isUserAuth} createNotification={this.createNotification}/>}/>
               <Route component={NotFound}/>
             </Switch>
           </div>

@@ -85,8 +85,7 @@ let image = {
       path: path,
       type: obj.type,
       size: obj.size,
-      userUid: obj.owner,
-      buffer: buffer
+      userUid: obj.owner
     }).then((data) => {
       if (cb && typeof cb === "function") {
         cb(data)
