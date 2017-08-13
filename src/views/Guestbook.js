@@ -10,7 +10,7 @@ class Guestbook extends Component {
     this.state = { messages: [], imagePre: '' };
     this.socket = io('http://localhost:5000/guestbook', {
       query: {
-        jta: localStorage.getItem('jta')
+        jta: this.getSecret('jta')
       }
     });
     this.socket.on('connection', (socket) => {
@@ -22,6 +22,15 @@ class Guestbook extends Component {
       this.setState({ messages: data });
       console.log(data);
     });
+  }
+
+  getSecret = () => {
+    let stor = localStorage.getItem('jta');
+    if (stor !== 'null' || stor !== null) {
+      return stor;
+    } else {
+      console.log('YESSS');
+    }
   }
 
   componentWillMount() {
@@ -73,14 +82,14 @@ class Guestbook extends Component {
     return (
       <div className="uk-container uk-margin">
         <h1>Guestbook</h1>
-        <div className="uk-container uk-width-1-2">
+        <div className="uk-container">
           {this.state.messages.map(msg => {
             return <Message key={msg.uid} msg={msg}/>
           })}
         </div>
         <form onSubmit={(e) => this.handleSubmit(e)}>
           <input ref="messageInput" className="messageInput" type="text"/>
-          <input ref="fileInput" type="file" className="fileInput" accept="image/png, image/jpeg, image/gif" onChange={e => this.previewImage(e)}/>
+          <input ref="fileInput" type="file" className="fileInput" accept="image/png, image/jpeg, image/gif, application/pdf" onChange={e => this.previewImage(e)}/>
           <input type="submit"/>
         </form>
         <GuestbookForm imgSrc={this.state.preview}/>

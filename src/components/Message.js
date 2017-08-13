@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Moment from 'react-moment';
+import Linkifier from 'react-linkifier';
 
 class Message extends Component {
 
@@ -13,7 +14,9 @@ class Message extends Component {
     }
     return (
       <div onDoubleClick={e => console.log(e)}>
-        <h1 className="uk-text-center">{this.props.msg.message}</h1>
+        <Linkifier target="_blank" className="uk-link-mute">
+          <p className="">{this.props.msg.message}</p>
+        </Linkifier>
         <p>
           <Moment fromNow>{this.props.msg.createdAt}</Moment>
         </p>

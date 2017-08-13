@@ -83,9 +83,9 @@ class Routes extends React.Component {
       })
       .then((response) => {
         console.log(response.data);
+        localStorage.setItem('jta', response.data.jwt);
         let user = response.data.user
         this.setUser(response.data.user);
-        localStorage.setItem('jta', response.data.jwt);
       })
       .catch((error) => {
         if (error.response) {
@@ -144,7 +144,7 @@ class Routes extends React.Component {
     getMessages: (fn) => {
       axios.get('/guestbook', {
           headers: {
-            JWT: localStorage.getItem('jta')
+            jta: localStorage.getItem('jta')
           }
         })
         .then(function(response) {
@@ -165,7 +165,7 @@ class Routes extends React.Component {
       <Router>
         <div id="body">
           <Preloader/>
-          <Header user="a"/>
+          <Route render={props => <Header location={props.location} user={this.state.user}/>}/>
           <div id="app">
             <Switch>
               <Route exact path="/" component={App}/>

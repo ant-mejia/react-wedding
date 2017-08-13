@@ -1,0 +1,51 @@
+/**
+ * Allows you to change the default container name
+ * from .o-container.
+ *
+ * Type: String
+ */
+$iota-objs-container-namespace: 'container';
+/**
+ * Allows you to specify the default set of padding
+ * left and right of your container. You can use a
+ * map in case you would like to specify responsive
+ * gutter sizes.
+ *
+ * Type: Number / List / Map
+ */
+$iota-objs-container-var: $iota-global-objects-namespace + $iota-objs-container-namespace;
+$iota-objs-container-gutter-default: $iota-global-gutter-default;
+/**
+ * Allows you to specify more sets of padding left and
+ * right of your container. You can use a nested map in
+ * case you would like to specify responsive gutter sizes.
+ *
+ * Type: Map
+ */
+$iota-objs-container-gutter-extra: ();
+/**
+ * Allows you to specify the default max-width of your
+ * container. You can use a map in case you would like
+ * to specify a responsive size.
+ *
+ * Type: String / Map
+ */
+$iota-objs-container-size-default: 1000px;
+/**
+ * Allows you to specify more sets of max-width for your
+ * container. You can use a nested map in case you would
+ * like to specify a responsive size.
+ *
+ * Type: Map
+ */
+$iota-objs-container-size-extra: ( max: (null: 100%), half: (null: 50%), large: ( null : 90%, sm : 1200px ) );
+@import 'node_modules/iotacss/objects/container';
+
+.#{$iota-objs-container-var} {
+  transition: all 0.5s linear;
+}
+@each $iota-objs-containerKey, $iota-objs-containerVal in $iota-objs-container-size-extra {
+  .#{$iota-objs-container-var + '-' + $iota-objs-containerKey} {
+    transition: all 0.5s linear;
+  }
+}

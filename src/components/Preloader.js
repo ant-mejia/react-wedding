@@ -15,7 +15,7 @@ class Preloader extends Component {
 
   render() {
     return (
-      <div id="preload" className={this.state.loaded ? 'loaded': 'loading'}>
+      <div id="preload" className={`uk-height-1-1 ${this.state.loaded ? 'loaded': 'loading'}`}>
       </div>
     );
   }

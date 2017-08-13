@@ -36,7 +36,7 @@ const Header = ({}) => (
         <div className="uk-navbar-item uk-logo">
           <Route>
             <NavLink activeClassName="active" to="/" className="uk-link-reset">
-              <Logo/>
+              <Logo classes="wt"/>
             </NavLink>
           </Route>
         </div>
@@ -96,7 +96,8 @@ const Header = ({}) => (
 );
 
 Header.propTypes = {
-  user: React.PropTypes.string.isRequired
+  user: React.PropTypes.object,
+  location: React.PropTypes.object
 };
 
 export default Header;

@@ -1,5 +1,54 @@
+@keyframes focusIn {
+  0% {
+    -webkit-filter: blur(0px);
+    -moz-filter: blur(0px);
+    -o-filter: blur(0px);
+    -ms-filter: blur(0px);
+    filter: blur(0px);
+  }
+
+  100% {
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+  }
+}
+
 .jumbotron {
-  background: linear-gradient(to top, $primary 70%, #fff);
+  background: linear-gradient(to top, #965b85);
+  text-align: center;
+
+  .down-arrow {
+    font-size: 30px;
+  }
+
+  .jumbo-text {
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+    /* @keyframes duration | timing-function | delay | iteration-count | direction | fill-mode | play-state | name */
+    animation: 0.5s linear 0s 1 reverse both focusIn;
+
+    h1 {
+      font-size: 90px;
+      // margin-bottom: ;
+      @media screen and (max-width: 770px) {
+        font-size: 11.7vw;
+      }
+    }
+
+    h2 {
+      font-size : 45px;
+      margin-top: 0;
+      @media screen and (max-width: 770px) {
+        font-size: 5.85vw;
+      }
+    }
+  }
 
   img {
     opacity: 0.2;

@@ -7,30 +7,33 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const passportLocal = require('./auth/local');
-const authHelpers = require('./auth/auth-helpers');
-const dbm = require('./db-helpers');
 const db = require('../db/index');
 const app = express();
 const models = require('../db/models/index');
 const passport = require('passport');
 require('dotenv').config();
+const authHelpers = require('./auth/auth-helpers');
+const dbm = require('./db-helpers');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const slogger = require('slogged')
 const moment = require('moment');
 var rfs = require('rotating-file-stream');
+// Setup logger
+var logDirectory = path.join(__dirname, 'logs');
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
+let stream = rfs('file.log', { size: '10M', interval: '1d', path: logDirectory });
 
-io.use(slogger())
+morgan.token('type', function(req, res) { return req.user ? req.user.email : 'anonymous' });
+morgan.token('moment', function(req, res) { return moment().format("MM/DD/YYYY h:mm:ss a Z") });
+app.use(morgan(':remote-addr - :type :referrer :moment ":method :url HTTP/:http-version" :status :response-time ms', {
+  stream: stream
+}));
+io.use(slogger());
+
 io.on('connection', function(socket) {
   socket.emit('hello', "TEST");
 
-  socket.on('guestbook newMessage', (str) => {
-    console.log(str);
-    dbm.guestbook.newMessage(str);
-    dbm.guestbook.getMessages((obj) => {
-      socket.broadcast('guestbook update', obj)
-    });
-  })
   socket.on('disconnect', function() {
     console.log("Socket disconnected: " + socket.id);
   });
@@ -45,13 +48,13 @@ gbs.on('connection', function(socket) {
   jwt.verify(token, process.env.SK, (err, decoded) => {
     if (err) {
       console.log(err, 'err');
+    } else {
+      this.user = decoded;
+      // console.log(Object.keys(socket.client.request));
+      console.log("Socket established with user: " + this.user.email);
     }
-    this.user = decoded;
-    // console.log(Object.keys(socket.client.request));
-    console.log("Socket established with user: " + this.user.email);
     // dbm.logSocket(params, )
   });
-
 
   socket.on('get messages', () => {
     dbm.guestbook.getMessages((data) => {
@@ -75,9 +78,22 @@ gbs.on('connection', function(socket) {
   });
 
   socket.on('new message', (obj) => {
+    dbm.email.send({
+      from: 'noreply@antmejia.com',
+      to: 'to@antmejia.com',
+      subject: 'Thanks for signing up!',
+      template: 'notification',
+      context: {
+        title: 'Thanks for signing up!',
+        button: "View Profile",
+        // images: ['icons/wedding-rings.png'],
+        body: ["Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."]
+      }
+    }, () => {
+      console.log('Message successfully logged');
+    });
     dbm.guestbook.newMessage(obj, this.user.uid, (data) => {
       console.log("DATA: ", data.dataValues.uid);
-
       dbm.guestbook.getMessages((data) => {
         gbs.emit('update messages', data);
       });
@@ -87,16 +103,7 @@ gbs.on('connection', function(socket) {
 });
 server.listen(5000);
 
-// Setup logger
-var logDirectory = path.join(__dirname, 'logs');
-fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
-let stream = rfs('file.log', { size: '10M', interval: '1d', path: logDirectory });
 
-morgan.token('type', function(req, res) { return req.user.email });
-morgan.token('moment', function(req, res) { return moment().format("MM/DD/YYYY h:mm:ss a Z") });
-app.use(morgan(':remote-addr - :type :referrer :moment ":method :url HTTP/:http-version" :status :response-time ms', {
-  stream: stream
-}));
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({
   extended: false
@@ -141,14 +148,22 @@ app.post('/register', (req, res, next) => {
   authHelpers.createUser(req, res)
     .then((obj) => {
       req.body.uid = obj.dataValues.uid;
-      res.status(200)
-        .json({
-          message: "User registration successful",
-          loginToken: {
-            email: obj.dataValues.email,
-            password: obj.dataValues.password
-          }
-        });
+      dbm.email.send({
+        from: 'from@antmejia.com',
+        to: 'to@antmejia.com',
+        subject: 'Test',
+        template: 'register',
+        context: {
+          name: 'Name'
+        }
+      });
+      res.status(200).json({
+        message: "User registration successful",
+        loginToken: {
+          email: obj.dataValues.email,
+          password: obj.dataValues.password
+        }
+      });
       authHelpers.userLog(req, res, next, 'created-user');
     })
     .catch((err) => {

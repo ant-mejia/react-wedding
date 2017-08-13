@@ -1,0 +1,20 @@
+$iota-utils-font: true;
+$iota-utils-font-dir: '../assets/fonts/';
+@import "../assets/fonts/config";
+$iota-utils-font-namespace: 'font-';
+@each $key, $font in $iota-global-utils-fonts {
+  .#{$iota-global-utilities-namespace + $iota-utils-font-namespace + $key} {
+    font-family: $font, sans-serif !important;
+  }
+  @for $i from 1 through 8 {
+    .#{$iota-global-utilities-namespace + $iota-utils-font-namespace + $key + $i} {
+      font-weight: $i * 100;
+      font-family: $font, sans-serif !important;
+    }
+  }
+}
+@font-face {
+  font-family: 'Sacramento';
+  src        : url('assets/fonts/sacramento/Sacramento-Regular.ttf') format('ttf');
+  font-style : normal;
+}
